@@ -67,36 +67,62 @@ H5PEditor.widgets.duration = H5PEditor.Duration = (function ($) {
     var that = this;
     var duration = {};
 
+    if (that.$errors.children().length) {
+      // Field hasn't been fixed since last validate
+      return false;
+    }
+
     this.$inputs.each(function (i) {
       var $input = $(this);
-      var values = H5P.trim($input.val()).split(':', 3);
+      var value = H5P.trim($input.val());
       var field = that.field.fields[i];
 
-      for (var j = 0; j < values.length; j++) {
-        var value = values[j];
-        if ((that.field.optional === undefined || !that.field.optional) && !value.length) {
-          that.$errors.append(H5PEditor.createError(H5PEditor.t('core', 'requiredProperty', {':property': field.name})));
-          return false;
-        }
-        else if (!value.match(new RegExp('^[0-9]+$'))) {
-          that.$errors.append(H5PEditor.createError(H5PEditor.t('core', 'onlyNumbers', {':property': field.name})));
-          return false;
-        }
+      // Check that the input isn't blank
+      if ((that.field.optional === undefined || !that.field.optional) && !value.length) {
+        that.$errors.append(H5PEditor.createError(H5PEditor.t('core', 'requiredProperty', {':property': field.name})));
+        return false;
       }
 
-      j--;
+      // Split time format and check that we have between one and two colons.
+      var values = value.split(':', 4);
+      if (values.length !== 2 && values.length !== 3) {
+        that.$errors.append(H5PEditor.createError(C.t('invalidTime', {':property': field.name})));
+        return false;
+      }
+
+      // Validate seconds and add to value
+      var allowedChars = new RegExp('^[0-9]+$');
+      var j = values.length - 1;
+
       value = parseInt(values[j]);
-      j--;
-      if (values[j] !== undefined) {
-        // Add minutes
-        value += values[j] * 60;
-      }
-      j--;
-      if (values[j] !== undefined) {
-        // Add hours
-        value += values[j] * 3600;
+      if (!values[j].match(allowedChars) || values[j].length !== 2 || value > 59) {
+        that.$errors.append(H5PEditor.createError(C.t('invalidTime', {':property': field.name})));
+        return false;
       }
 
+      // Validate minutes
+      j = j - 1;
+      var minutes = parseInt(values[j]);
+      if (!values[j].match(allowedChars) || (values[j - 1] !== undefined && values[j].length !== 2) || (values[j - 1] === undefined && values[j].length !== (minutes + '').length) || minutes > 59) {
+        that.$errors.append(H5PEditor.createError(C.t('invalidTime', {':property': field.name})));
+        return false;
+      }
+      // Convert to seconds and add to value
+      value += minutes * 60;
+
+      // Validate hours
+      j = j - 1;
+      if (values[j] !== undefined) {
+        var hours = parseInt(values[j]);
+        if (!values[j].match(allowedChars) || values[j].length !== (minutes + '').length || hours < 1) {
+          that.$errors.append(H5PEditor.createError(C.t('invalidTime', {':property': field.name})));
+          return false;
+        }
+        // Convert to seconds and add to value
+        value += hours * 3600;
+      }
+
+      // Check that field doesn't exceed its min and max values.
       if (field.max !== undefined && value > field.max) {
         that.$errors.append(H5PEditor.createError(H5PEditor.t('core', 'exceedsMax', {':property': field.name, ':max': field.max})));
         return false;
@@ -109,6 +135,7 @@ H5PEditor.widgets.duration = H5PEditor.Duration = (function ($) {
       duration[field.name] = value;
     });
 
+    // Check that "To" time always is after "From" time.
     if (duration.from > duration.to) {
       this.$errors.append(H5PEditor.createError(C.t('fromBiggerThanTo')));
     }
