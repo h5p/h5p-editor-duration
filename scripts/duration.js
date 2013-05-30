@@ -202,6 +202,7 @@ H5PEditor.widgets.duration = H5PEditor.Duration = (function ($) {
 H5PEditor.language['H5PEditor.Duration'] = {
   libraryStrings: {
     exceedsMin: '":property" exceeds minimum value of :min.',
-    fromBiggerThanTo: '"From" must be earlier than "To".'
+    fromBiggerThanTo: '"From" must be earlier than "To".',
+    invalidTime: '":property" contains an invalid time format.'
   }
 };
