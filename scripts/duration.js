@@ -124,11 +124,11 @@ H5PEditor.widgets.duration = H5PEditor.Duration = (function ($) {
 
       // Check that field doesn't exceed its min and max values.
       if (field.max !== undefined && value > field.max) {
-        that.$errors.append(H5PEditor.createError(H5PEditor.t('core', 'exceedsMax', {':property': field.name, ':max': field.max})));
+        that.$errors.append(H5PEditor.createError(H5PEditor.t('core', 'exceedsMax', {':property': field.name, ':max': C.humanizeTime(field.max)})));
         return false;
       }
       else if (field.min !== undefined && value < field.min) {
-        that.$errors.append(H5PEditor.createError(C.t('exceedsMin', {':property': field.name, ':min': field.min})));
+        that.$errors.append(H5PEditor.createError(C.t('exceedsMin', {':property': field.name, ':min': C.humanizeTime(field.min)})));
         return false;
       }
 
