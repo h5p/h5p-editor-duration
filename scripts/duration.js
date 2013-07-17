@@ -34,7 +34,7 @@ H5PEditor.widgets.duration = H5PEditor.Duration = (function ($) {
 
     this.$item = $(this.createHtml()).appendTo($wrapper);
     this.$inputs = this.$item.find('input');
-    this.$errors = this.$item.children('.errors');
+    this.$errors = this.$item.children('.h5p-errors');
 
     this.$inputs.change(function () {
       // Validate
