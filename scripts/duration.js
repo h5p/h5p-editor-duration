@@ -76,6 +76,7 @@ H5PEditor.widgets.duration = H5PEditor.Duration = (function ($) {
       var $input = $(this);
       var value = H5P.trim($input.val());
       var field = that.field.fields[i];
+      var allowedChars = new RegExp('^[0-9]+$');
 
       // Check that the input isn't blank
       if ((that.field.optional === undefined || !that.field.optional) && !value.length) {
@@ -83,15 +84,51 @@ H5PEditor.widgets.duration = H5PEditor.Duration = (function ($) {
         return false;
       }
 
+      // Split time format and check if we have a fraction part which will be turned (floored) into tens of seconds
+	  var values = value.split('.', 3);
+	  var value_tenths = 0;
+
+	  if (values.length == 1) {
+	    value_tenths = 0;			// no fraction part in value, tenths remains zero
+	  }
+
+	  if (values.length == 2) {		// there is a second part after the split which contains a fraction
+
+	    if (!values[1].match(allowedChars) || value > 59) {
+          that.$errors.append(H5PEditor.createError(C.t('invalidTime', {':property': field.name})));
+          return false;
+        }
+	  
+	    if  (Math.floor(parseInt(values[1]) / 10) == 0) {				// the second part of the split are tenths
+		  value_tenths = parseInt(values[1]) / 10;
+		}
+		else if (Math.floor(parseInt(values[1]) / 10) < 10) {			// the second part of the split are hundredths
+		  value_tenths = Math.floor(parseInt(values[1]) / 10) / 10;
+		}
+		else if (Math.floor(parseInt(values[1]) / 10) < 100) {			// the second part of the split are a number of milliseconds
+		  value_tenths = Math.floor(parseInt(values[1]) / 100) / 10;
+		}
+		else {
+          that.$errors.append(H5PEditor.createError(C.t('invalidTime', {':property': field.name})));	// too many digits after the dot in the time field
+          return false;
+		}
+		
+	    value = values[0];			// the first part of the split are the HH:MM:SS
+	  }
+
+	  if (values.length >= 3) {
+        that.$errors.append(H5PEditor.createError(C.t('invalidTime', {':property': field.name})));		// too many dots in the time field
+        return false;
+	  }
+	  
       // Split time format and check that we have between one and two colons.
-      var values = value.split(':', 4);
+      values = value.split(':', 4);
       if (values.length !== 2 && values.length !== 3) {
         that.$errors.append(H5PEditor.createError(C.t('invalidTime', {':property': field.name})));
         return false;
       }
 
       // Validate seconds and add to value
-      var allowedChars = new RegExp('^[0-9]+$');
       var j = values.length - 1;
 
       value = parseInt(values[j]);
@@ -100,6 +137,9 @@ H5PEditor.widgets.duration = H5PEditor.Duration = (function ($) {
         return false;
       }
 
+      // Add the tenths to seconds
+      value += value_tenths;
+	  
       // Validate minutes
       j = j - 1;
       var minutes = parseInt(values[j]);
@@ -140,6 +180,12 @@ H5PEditor.widgets.duration = H5PEditor.Duration = (function ($) {
       this.$errors.append(H5PEditor.createError(C.t('fromBiggerThanTo')));
     }
 
+	// check whether there is a minimum duration of 300 milliseconds
+    if ((duration.to - duration.from) < 0.29) {		// that is strange... should be < 0.3
+      alert(duration.to - duration.from);
+	  this.$errors.append(H5PEditor.createError(C.t('durationtoosmall')));
+    }
+	
     return H5PEditor.checkErrors(this.$errors, this.$inputs, duration);
   };
 
@@ -170,6 +216,7 @@ H5PEditor.widgets.duration = H5PEditor.Duration = (function ($) {
   C.humanizeTime = function (seconds) {
     var minutes = Math.floor(seconds / 60);
     var hours = Math.floor(minutes / 60);
+    var tenths = (seconds * 10) - (Math.floor(seconds) * 10);
 
     minutes = minutes % 60;
     seconds = Math.floor(seconds % 60);
@@ -190,7 +237,9 @@ H5PEditor.widgets.duration = H5PEditor.Duration = (function ($) {
       time += '0';
     }
 
-    time += seconds;
+    time += seconds + '.';		// ----------============ plus ..
+	
+	time += tenths;				// ----------============ the tenth
 
     return time;
   };
@@ -203,6 +252,7 @@ H5PEditor.language['H5PEditor.Duration'] = {
   libraryStrings: {
     exceedsMin: '":property" exceeds minimum value of :min.',
     fromBiggerThanTo: '"From" must be earlier than "To".',
-    invalidTime: '":property" contains an invalid time format.'
+    invalidTime: '":property" contains an invalid time format.',
+    durationtoosmall: '"To" needs to be at least 0.3 seconds greater than "From".'
   }
 };
