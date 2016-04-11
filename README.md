@@ -1,7 +1,7 @@
 H5P Editor Duration
 ==========
 
-Makes it eaiser to select time spans.
+Makes it easier to select time spans.
 
 ## License
 
