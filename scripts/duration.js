@@ -114,7 +114,7 @@ H5PEditor.widgets.duration = H5PEditor.Duration = (function ($) {
       j = j - 1;
       if (values[j] !== undefined) {
         var hours = parseInt(values[j]);
-        if (!values[j].match(allowedChars) || values[j].length !== (minutes + '').length || hours < 1) {
+        if (!values[j].match(allowedChars) || values[j].length !== (hours + '').length || hours < 1) {
           that.$errors.append(H5PEditor.createError(C.t('invalidTime', {':property': field.name})));
           return false;
         }
