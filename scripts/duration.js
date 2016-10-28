@@ -55,9 +55,9 @@ H5PEditor.widgets.duration = H5PEditor.Duration = (function ($) {
    */
   C.prototype.createHtml = function () {
     var input = H5PEditor.createText(this.params !== undefined ? C.humanizeTime(this.params.from) : undefined, 15, 'From') + ' - ' + H5PEditor.createText(this.params !== undefined ? C.humanizeTime(this.params.to) : undefined, 15, 'To');
-    var label = H5PEditor.createLabel(this.field, input);
+    var label = H5PEditor.createLabel(this.field);
 
-    return H5PEditor.createItem(this.field.widget, label, this.field.description);
+    return H5PEditor.createItem(this.field.widget, label + input, this.field.description);
   };
 
   /**
