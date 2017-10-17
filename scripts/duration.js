@@ -21,7 +21,7 @@ H5PEditor.widgets.duration = H5PEditor.Duration = (function ($) {
     this.field = field;
     this.params = params;
     this.setValue = setValue;
-  };
+  }
 
   /**
    * Append the field to the wrapper.
