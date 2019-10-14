@@ -8,7 +8,7 @@
   "author": "Frode Petterson",
   "coreApi": {
     "majorVersion": 1,
-    "minorVersion": 12
+    "minorVersion": 24
   },
   "preloadedJs": [
     {
