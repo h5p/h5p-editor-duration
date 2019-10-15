@@ -54,8 +54,10 @@ H5PEditor.widgets.duration = H5PEditor.Duration = (function ($) {
    * Creates HTML for the widget.
    */
   C.prototype.createHtml = function () {
-    var input = H5PEditor.createText(this.params !== undefined ? C.humanizeTime(this.params.from) : undefined, 15, 'From') + ' - ' + H5PEditor.createText(this.params !== undefined ? C.humanizeTime(this.params.to) : undefined, 15, 'To');
-    return H5PEditor.createFieldMarkup(this.field, input);
+    const id = H5PEditor.getNextFieldId(this.field);
+    const descriptionId = (this.field.description !== undefined ? H5PEditor.getDescriptionId(id) : undefined)
+    var input = H5PEditor.createText(this.params !== undefined ? C.humanizeTime(this.params.from) : undefined, 15, 'From', id, descriptionId) + ' - ' + H5PEditor.createText(this.params !== undefined ? C.humanizeTime(this.params.to) : undefined, 15, 'To', undefined, descriptionId);
+    return H5PEditor.createFieldMarkup(this.field, input, id);
   };
 
   /**
