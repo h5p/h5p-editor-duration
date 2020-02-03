@@ -95,7 +95,7 @@ H5PEditor.widgets.duration = H5PEditor.Duration = (function ($) {
       var j = values.length - 1;
 
       value = parseFloat(values[j]);
-      if (!values[j].match(/^[0-9]{2}$|\.[0-9]{1,3}$/) || value > 59 || value < 0) {
+      if (!values[j].match(/^[0-9]{2}$|\.[0-9]{1,3}$/) || value >= 60 || value < 0) {
         that.$errors.append(H5PEditor.createError(C.t('invalidTime', {':property': field.name})));
         return false;
       }
