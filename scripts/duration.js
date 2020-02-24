@@ -94,8 +94,8 @@ H5PEditor.widgets.duration = H5PEditor.Duration = (function ($) {
       var allowedChars = new RegExp('^[0-9]+$');
       var j = values.length - 1;
 
-      value = parseInt(values[j]);
-      if (!values[j].match(allowedChars) || values[j].length !== 2 || value > 59) {
+      value = parseFloat(values[j]);
+      if (!values[j].match(/^[0-9]{2}$|\.[0-9]{1,3}$/) || value >= 60 || value < 0) {
         that.$errors.append(H5PEditor.createError(C.t('invalidTime', {':property': field.name})));
         return false;
       }
@@ -172,7 +172,7 @@ H5PEditor.widgets.duration = H5PEditor.Duration = (function ($) {
     var hours = Math.floor(minutes / 60);
 
     minutes = minutes % 60;
-    seconds = Math.floor(seconds % 60);
+    seconds = Math.floor((seconds % 60) * 1000) / 1000;
 
     var time = '';
 
