@@ -1,7 +1,7 @@
 {
   "libraryStrings": {
     "exceedsMin": "\":property\" აჭარბებს :min-ის მინიმალურ მნიშვნელობას.",
-    "fromBiggerThanTo": "\"From\" უნდა იყოს უფრო ადრეული, ვიდრე \"To\".",
+    "fromBiggerThanTo": "\"From\" უნდა იყოს \"To\" -მდე.",
     "invalidTime": "\":property\" შეიცავს დროის დაუშვებელ ფორმატს."
   }
 }
