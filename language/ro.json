@@ -1,0 +1,7 @@
+{
+  "libraryStrings": {
+    "exceedsMin": "\":property\" depășește valoarea minimă de :min.",
+    "fromBiggerThanTo": "Valoarea „De la” trebuie să fie anterioară valorii „Până la”.",
+    "invalidTime": "\":property\" conține un format de timp invalid."
+  }
+}
